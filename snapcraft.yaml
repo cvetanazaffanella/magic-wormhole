@@ -1,7 +1,7 @@
 name: wormhole
 version: git
 version-script: python3 -c "import versioneer; print(versioneer.get_version())"
-summary: get things from one computer to another, safely
+summary: Get things from one computer to another, safely
 description: |
   This package provides a library and a command-line tool named wormhole,
   which makes it possible to get short pieces of text (and arbitrary-sized
@@ -9,6 +9,7 @@ description: |
   identified by using identical "wormhole codes": in general, the sending
   machine generates and displays the code, which must then be typed into the
   receiving machine.
+  
   The codes are short and human-pronounceable, using a phonetically-distinct
   wordlist. The receiving side offers tab-completion on the codewords, so
   usually only a few characters must be typed. Wormhole codes are single-use
@@ -17,11 +18,13 @@ description: |
 grade: devel
 confinement: strict
 
+# Define the command and required plugs for the wormhole application
 apps:
   wormhole:
     command: env LC_ALL=C.UTF-8 LANG=C.UTF-8 wormhole
     plugs: [home, network, network-bind]
 
+# Define the parts required to build the snap
 parts:
   magic-wormhole:
     source: .
@@ -34,6 +37,16 @@ parts:
       - libssl-dev
       - make
     prepare: |
-      # FIXME make sure that the build dir has all the files from the repo,
-      # so the version is not tagged as dirty. --elopio - 20170730
+      # Ensure the build directory has all files from the repo
+      # This prevents the version from being incorrectly tagged as dirty
       cp ../src/snapcraft.yaml .
+
+    # Add dependencies or other configurations if necessary
+    stage-packages:
+      - python3-pip
+      - python3-setuptools
+      - python3-wheel
+
+    # Include the necessary Python packages to be installed
+    python-packages:
+      - magic-wormhole
